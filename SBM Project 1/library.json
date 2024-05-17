@@ -1,0 +1,20 @@
+{
+    "name": "KeypadNF",
+    "version": "1.0.0",
+    "description": "",
+    "keywords": "keypad, diode, password",
+    "authors":
+    [
+      {
+        "name": "Naufal Septio",
+        "email": "naufalseptiofathurrahman@mail.ugm.ac.id",
+        "maintainer": true
+      },
+      {
+        "name": "Farhan Arief Ramadhan",
+        "email": "farhanarieframadhan@mail.ugm.ac.id",
+        "maintainer": true
+      }
+    ],
+    "license": "NF"
+  }
