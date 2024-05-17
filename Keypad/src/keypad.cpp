@@ -2,18 +2,19 @@
 #include <Arduino.h>
 #include <LiquidCrystal_I2C.h>
 #include <Keypad.h>
+#include <string>
 
-#define passLength 9
+//#define passLength 9
 
 LiquidCrystal_I2C lcd(0x27,16,2);
 
 int signalPin = 12;
 
-char data[passLength];
-char master[passLength] = {"12345ABC"};
+String data;
+String master = {"12345ABC"};
 byte dataCount = 0, masterCount = 0;
 bool pass_is_good;
-char customKey;
+String customKey;
 
 const byte ROWS = 4;
 const byte COLS = 4;
@@ -49,16 +50,16 @@ void loop() {
 
   customKey = customKeypad.getKey();
   if (customKey){
-    data[dataCount] = customKey; 
+    data += customKey;
     lcd.setCursor(dataCount,1); 
     lcd.print(data[dataCount]); 
     dataCount++; 
     }
 
-  if(dataCount == passLength-1){
+  if(dataCount == master.length()){
     lcd.clear();
 
-    if(!strcmp(data, master)){
+    if(data != master){
       lcd.print("Berhasil");
       digitalWrite(signalPin, HIGH); 
       delay(5000);
