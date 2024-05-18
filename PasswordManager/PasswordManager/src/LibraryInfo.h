@@ -4,6 +4,7 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
+#include <PasswordManager.hpp>
 
 const char* GetLibraryAuthor();
 int GetLibraryVersion();
