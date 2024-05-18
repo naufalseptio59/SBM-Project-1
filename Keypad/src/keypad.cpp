@@ -3,10 +3,12 @@
 #include <LiquidCrystal_I2C.h>
 #include <Keypad.h>
 #include <string>
+#include <PasswordManager.hpp>
 
 //#define passLength 9
 
 LiquidCrystal_I2C lcd(0x27,16,2);
+PasswordManager pm = PasswordManager();
 
 int signalPin = 12;
 
