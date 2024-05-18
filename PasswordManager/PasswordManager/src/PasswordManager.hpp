@@ -1,3 +1,4 @@
+#ifndef PASSWORDMANAGER_HPP
 #include <string>
 
 class PasswordManager{
@@ -7,3 +8,4 @@ class PasswordManager{
     private:
         static std::string password;
 };
+#endif
