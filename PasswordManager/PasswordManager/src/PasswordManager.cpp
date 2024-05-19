@@ -1,12 +1,12 @@
-#include <string>
 #include "PasswordManager.hpp"
+#include <string>
 
-std::string PasswordManager::password = "";
+String PasswordManager::password = "";
 
-void PasswordManager::SetPassword(std::string pass){
+void PasswordManager::SetPassword(String pass){
     PasswordManager::password = pass;
 }
 
-bool PasswordManager::CheckPassword(std::string pass){
+bool PasswordManager::CheckPassword(String pass){
     return pass == PasswordManager::password;
 }

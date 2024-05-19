@@ -5,18 +5,24 @@
 #include <string>
 #include <PasswordManager.hpp>
 
+enum State {
+  Checking,
+  Setting
+};
+
 //#define passLength 9
 
+State state = Checking;
 LiquidCrystal_I2C lcd(0x27,16,2);
-PasswordManager pm = PasswordManager();
+PasswordManager passwordManager = PasswordManager();
 
 int signalPin = 12;
 
-String data;
-String master = {"12345ABC"};
+std::string data;
+std::string master = {"12345ABC"};
 byte dataCount = 0, masterCount = 0;
 bool pass_is_good;
-String customKey;
+char customKey;
 
 const byte ROWS = 4;
 const byte COLS = 4;
@@ -34,45 +40,114 @@ char keys[ROWS][COLS] = {
 Keypad customKeypad = Keypad(makeKeymap(keys), rowPins, colPins, ROWS, COLS); 
 
 void clearData(){
-  while(dataCount != 0){
-      data[dataCount--] = 0;
-    }
+  // while(dataCount != 0){
+  //     data[dataCount--] = 0;
+  //   }
+  dataCount = 0;
+  data = "";
   return;
 }
 
+void StoreData(char input){
+  dataCount++;
+  data += input;
+}
+
+char GetData(){
+  return data[dataCount - 1];
+}
+
+void SwitchState(State newState){
+  state = newState;
+  clearData();
+  lcd.clear();
+  lcd.setCursor(0,0);
+  String instruction = "~";
+  switch (newState)
+  {
+  case Checking:
+    instruction = "Masukkan Sandi:";
+    break;
+  case Setting:
+    instruction = "Sandi Baru:";
+    break;
+  }
+  lcd.print(instruction);
+}
+
+int i = 0;
+
 void setup() {
+  passwordManager.SetPassword(master);
+
+  Serial.begin(9600);
   lcd.init(); 
   lcd.backlight();
   pinMode(signalPin, OUTPUT);
+
+  SwitchState(Checking);
 }
 
-void loop() {
-  lcd.setCursor(0,0);
-  lcd.print("Masukkan Password: ");
-
-  customKey = customKeypad.getKey();
-  if (customKey){
-    data += customKey;
-    lcd.setCursor(dataCount,1); 
-    lcd.print(data[dataCount]); 
-    dataCount++; 
-    }
-
-  if(dataCount == master.length()){
-    lcd.clear();
-
-    if(data != master){
-      lcd.print("Berhasil");
-      digitalWrite(signalPin, HIGH); 
-      delay(5000);
-      digitalWrite(signalPin, LOW);
-      }
-    else{
-      lcd.print("Gagal");
-      delay(1000);
-      }
-    
-    lcd.clear();
-    clearData();
+/*
+void loop(){
+  char input = customKeypad.getKey();
+  if(input != NO_KEY){
+    lcd.setCursor(i,0);
+    int test = input;
+    lcd.print(test);
+    lcd.setCursor(i,1);
+    lcd.print(input);
+    i += 1;
+    Serial.print(input);
   }
+}
+*/
+
+void loop() {
+  customKey = customKeypad.getKey();
+  if (customKey != NO_KEY){
+    
+    if (state != Setting && customKey == '*'){
+      SwitchState(Setting);
+    }
+    
+    switch (state)
+    {
+      case Checking:
+        StoreData(customKey);
+        lcd.setCursor(dataCount - 1,1); 
+        lcd.print(GetData()); 
+        if(dataCount == master.length()){
+          lcd.clear();
+          if(passwordManager.CheckPassword(data)){
+            lcd.print("Berhasil");
+            digitalWrite(signalPin, HIGH); 
+            delay(2000);
+            digitalWrite(signalPin, LOW);
+          }
+          else{
+            lcd.print("Gagal");
+            delay(1000);
+          }
+          SwitchState(Checking);
+        }
+        break;
+      case Setting:
+        if (customKey != '*'){
+          StoreData(customKey);
+          lcd.setCursor(dataCount - 1,1);
+          lcd.print(GetData());
+          Serial.print(dataCount);
+          if(dataCount >= 8){
+            passwordManager.SetPassword(data);
+            Serial.print("Sandi Diubah!");
+            lcd.clear();
+            lcd.print("Sandi Diubah!");
+            delay(1000);
+            SwitchState(Checking);
+          }
+        }
+        break;
+    }
+  } 
 }

@@ -3,9 +3,9 @@
 
 class PasswordManager{
     public:
-        static void SetPassword(std::string pass);
-        static bool CheckPassword(std::string pass);
+        static void SetPassword(String pass);
+        static bool CheckPassword(String pass);
     private:
-        static std::string password;
+        static String password;
 };
 #endif
