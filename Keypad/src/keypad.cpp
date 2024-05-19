@@ -10,8 +10,6 @@ enum State {
   Setting
 };
 
-//#define passLength 9
-
 State state = Checking;
 LiquidCrystal_I2C lcd(0x27,16,2);
 PasswordManager passwordManager = PasswordManager();
@@ -40,9 +38,6 @@ char keys[ROWS][COLS] = {
 Keypad customKeypad = Keypad(makeKeymap(keys), rowPins, colPins, ROWS, COLS); 
 
 void clearData(){
-  // while(dataCount != 0){
-  //     data[dataCount--] = 0;
-  //   }
   dataCount = 0;
   data = "";
   return;
@@ -87,21 +82,6 @@ void setup() {
 
   SwitchState(Checking);
 }
-
-/*
-void loop(){
-  char input = customKeypad.getKey();
-  if(input != NO_KEY){
-    lcd.setCursor(i,0);
-    int test = input;
-    lcd.print(test);
-    lcd.setCursor(i,1);
-    lcd.print(input);
-    i += 1;
-    Serial.print(input);
-  }
-}
-*/
 
 void loop() {
   customKey = customKeypad.getKey();
